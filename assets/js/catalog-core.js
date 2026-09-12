@@ -6,7 +6,7 @@
 })(typeof window !== 'undefined' ? window : globalThis, function() {
   const normalize = value => String(value || '').normalize('NFKC').toLocaleLowerCase('uk-UA').replace(/[^\p{L}\p{N}]/gu, '');
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const defaults = {cat:'all',type:'all',brand:'all',parameter:'all',volume:'all',capacity:'all',approval:'all',diameter:'all',q:'',min:'',max:'',sort:'popular',limit:12};
+  const defaults = {cat:'all',type:'all',brand:'all',parameter:'all',volume:'all',capacity:'all',approval:'all',standard:'all',diameter:'all',q:'',min:'',max:'',sort:'popular',limit:12};
   function stateFrom(search) {
     const params = new URLSearchParams(search), state = {...defaults};
     for (const k of Object.keys(defaults)) if (params.has(k)) state[k] = params.get(k);
@@ -23,7 +23,8 @@
   function enrich(product) {
     const p = {...product};
     p.parameter = p.facet;
-    p.approval = p.approvals || [];
+    p.standard = (p.approvals || []).filter(v => /^(ACEA|API) /.test(v));
+    p.approval = (p.approvals || []).filter(v => !/^(ACEA|API) /.test(v));
     const volume = p.name.match(/(\d+(?:[.,]\d+)?)\s*(мл|L|л)(?=\s|$|[^\p{L}])/iu);
     p.volume = volume ? `${volume[1]} ${volume[2].toLowerCase() === 'мл' ? 'мл' : 'л'}` : '';
     const capacity = p.name.match(/(\d+)\s*Ah/i);
@@ -37,7 +38,7 @@
     let result = products.filter(p => {
       const haystack = normalize([p.name,p.brand,p.sku,p.type,...(p.oem || [])].join(' '));
       return words.every(w => haystack.includes(w)) &&
-        ['cat','type','brand','parameter','volume','capacity','approval','diameter'].every(k => ignore === k || !state[k] || state[k] === 'all' || (Array.isArray(p[k]) ? p[k].includes(state[k]) : p[k] === state[k])) &&
+        ['cat','type','brand','parameter','volume','capacity','approval','standard','diameter'].every(k => ignore === k || !state[k] || state[k] === 'all' || (k === 'brand' ? state[k].split('|').includes(p[k]) : Array.isArray(p[k]) ? p[k].includes(state[k]) : p[k] === state[k])) &&
         (ignore === 'price' || state.min === '' || p.price >= Number(state.min)) &&
         (ignore === 'price' || state.max === '' || p.price <= Number(state.max));
     });

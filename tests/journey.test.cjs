@@ -69,3 +69,18 @@ test('theme is shared, toggles both ways and arbitrary stored input is escaped',
  assert.equal(a.w.localStorage.getItem('av-theme'),'light');a.q('[data-theme-toggle]').click();assert.equal(a.w.document.documentElement.dataset.theme,'dark');
  assert.equal(a.all('#selectedFilters img').length,0);a.close();
 });
+
+test('oil volume keeps type navigation and unavailable approvals visible',()=>{
+ const a=page();a.q('[data-category="service"]').click();a.change('[data-field="type"]','Олива');a.change('[data-field="volume"]','4 л');
+ assert.equal(a.all('.product').length,1);
+ assert.ok(a.all('[data-field="type"] option').some(o=>o.value==='Фільтр'&&!o.disabled));
+ assert.ok(a.q('[data-field="approval"]'));assert.ok(a.q('[data-field="standard"]'));
+ assert.ok(a.all('[data-field="approval"] option').filter(o=>o.value!=='all').every(o=>o.disabled));
+ a.change('[data-field="type"]','Фільтр');assert.equal(a.q('[data-field="volume"]'),null);assert.ok(a.all('.product').length>1);a.close();
+});
+test('manufacturer multi-selection uses OR and survives return URL',()=>{
+ const a=page();a.q('[data-category="service"]').click();a.change('[data-field="type"]','Олива');
+ a.q('[data-brand="CASTROL"]').click();assert.equal(a.all('.product').length,1);
+ a.q('[data-brand="MOTUL"]').click();assert.equal(a.all('.product').length,2);
+ const b=page('index.html',a.w.location.search);assert.equal(b.all('[data-brand]:checked').length,2);assert.equal(b.all('.product').length,2);a.close();b.close();
+});

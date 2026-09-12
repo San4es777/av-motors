@@ -1,23 +1,27 @@
 'use strict';
 let state=Core.stateFrom(location.search), view=storage.get('av-view-v2','grid');
 if(!['grid','list'].includes(view))view='grid';
-const fieldNames={type:'Тип товару',brand:'Виробник',parameter:'Параметр',volume:'Об’єм',capacity:'Ємність',approval:'Специфікація / допуск',diameter:'Діаметр'};
+const fieldNames={type:'Тип товару',brand:'Виробник',parameter:'Параметр',volume:'Об’єм',capacity:'Ємність',approval:'Допуск автовиробника',standard:'Стандарт API / ACEA',diameter:'Діаметр'};
 function syncURL(){const q=Core.query(state);history.replaceState(null,'',location.pathname+(q?'?'+q:'')+location.hash);}
 function field(label,key,values) {
  if(!values.length&&state[key]==='all')return '';
- if(state[key]!=='all'&&!values.includes(state[key]))values=[state[key],...values];
- return `<label class="field">${esc(label)}<select data-field="${key}" aria-label="${esc(label)}"><option value="all">Усі</option>${values.map(v=>`<option value="${esc(v)}" ${state[key]===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>`;
+ const selected=key==='brand'?state[key].split('|'):[state[key]];
+ for(const v of selected)if(v!=='all'&&!values.includes(v))values=[v,...values];
+ const count=v=>Core.filter(PRODUCTS,key==='type'?{...Core.defaults,cat:state.cat,type:v,q:state.q}:{...state,[key]:v}).length;
+ if(key==='brand')return `<fieldset class="brand-facet"><legend>${esc(label)}</legend><div class="brand-options">${values.map(v=>`<label class="check-option"><input type="checkbox" data-brand="${esc(v)}" ${selected.includes(v)?'checked':''} ${!count(v)&&!selected.includes(v)?'disabled':''}><span>${esc(v)}</span><small>${count(v)}</small></label>`).join('')}</div></fieldset>`;
+ return `<label class="field">${esc(label)}<select data-field="${key}" aria-label="${esc(label)}"><option value="all">Усі</option>${values.map(v=>`<option value="${esc(v)}" ${state[key]===v?'selected':''} ${!count(v)&&state[key]!==v?'disabled':''}>${esc(v)} (${count(v)})</option>`).join('')}</select></label>`;
 }
 function renderFilters() {
  const type=state.type;
  const parameterNames={'Олива':'В’язкість SAE','Фільтр':'Вид фільтра','АКБ':'Технологія','Лампа':'Цоколь','Рідина':'Специфікація','Свічка':'Тип електрода','Хімія':'Призначення','Догляд':'Призначення'};
- const keys=['type','brand'];if(type!=='all')keys.push('parameter','volume','capacity','approval','diameter');
- $('#facets').innerHTML=keys.map(k=>field(k==='parameter'?(parameterNames[type]||'Різновид'):fieldNames[k],k,Core.options(PRODUCTS,state,k))).join('');
+ const keys=['type','brand'];if(type!=='all')keys.push('parameter','volume','capacity','approval','standard','diameter');
+ $('#facets').innerHTML=keys.map(k=>field(k==='parameter'?(parameterNames[type]||'Різновид'):fieldNames[k],k,Core.options(PRODUCTS,{...Core.defaults,cat:state.cat,type:k==='type'?'all':state.type},k))).join('');
  $('#facets').querySelectorAll('select').forEach(el=>el.onchange=()=>{
  const k=el.dataset.field;state[k]=el.value;
- if(k==='type'){state.brand=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';}
- state.limit=12;render();
+ if(k==='type'){state.brand=state.parameter=state.volume=state.capacity=state.approval=state.standard=state.diameter='all';}
+ state.limit=12;render();$('#facets').querySelector(`[data-field="${k}"]`)?.focus();
  });
+ $('#facets').querySelectorAll('[data-brand]').forEach(el=>el.onchange=()=>{const values=[...$('#facets').querySelectorAll('[data-brand]:checked')].map(x=>x.dataset.brand);state.brand=values.join('|')||'all';state.limit=12;render();$('#facets').querySelectorAll('[data-brand]').forEach(x=>{if(x.dataset.brand===el.dataset.brand)x.focus();});});
  $('#minPrice').value=state.min;$('#maxPrice').value=state.max;
  $('#filterNote').textContent=type==='Олива'?'Допуск виробника авто перевіряють окремо: однакова в’язкість не підтверджує сумісність.':type==='all'?'Оберіть тип товару, щоб побачити його спеціальні параметри.':'Показані лише параметри з демонстраційного каталогу. Точні характеристики потрібно підтвердити.';
 }
@@ -28,7 +32,7 @@ function renderSelected(){
  const items=[];
  if(state.q)items.push(['q','Пошук: '+state.q]);
  if(state.cat!=='all')items.push(['cat',CATEGORIES.find(c=>c.id===state.cat)?.name||state.cat]);
- for(const k of ['type','brand','parameter','volume','capacity','approval','diameter'])if(state[k]!=='all')items.push([k,state[k]]);
+ for(const k of ['type','brand','parameter','volume','capacity','approval','standard','diameter'])if(state[k]!=='all')items.push([k,state[k].replaceAll('|',', ')]);
  if(state.min!==''||state.max!=='')items.push(['price',`Ціна: ${state.min||'0'}–${state.max||'∞'} ₴`]);
  $('#selectedFilters').innerHTML=items.map(([key,label])=>`<button class="chip" data-reset="${key}" aria-label="Прибрати ${esc(label)}">${esc(label)} <span aria-hidden="true">×</span></button>`).join('');
  $('#resetAll').hidden=!items.length;
@@ -49,15 +53,15 @@ function render(){
 }
 function reset(key){
  if(key==='all'){state={...Core.defaults};}
- else if(key==='cat'){state.cat=state.type=state.brand=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';}
- else if(key==='type'){state.type=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';}
+ else if(key==='cat'){state.cat=state.type=state.brand=state.parameter=state.volume=state.capacity=state.approval=state.standard=state.diameter='all';}
+ else if(key==='type'){state.type=state.parameter=state.volume=state.capacity=state.approval=state.standard=state.diameter='all';}
  else if(key==='price'){state.min=state.max='';}
  else state[key]=Core.defaults[key];
  state.limit=12;render();
 }
 document.addEventListener('click',e=>{
  const b=e.target.closest('button,a');if(!b)return;
- if(b.matches('[data-category]')){e.preventDefault();state.cat=b.dataset.category;state.type=state.brand=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';state.limit=12;render();}
+ if(b.matches('[data-category]')){e.preventDefault();state.cat=b.dataset.category;state.type=state.brand=state.parameter=state.volume=state.capacity=state.approval=state.standard=state.diameter='all';state.limit=12;render();}
  if(b.matches('[data-reset]'))reset(b.dataset.reset);
  if(b.matches('[data-view]')){view=b.dataset.view;storage.set('av-view-v2',view);render();}
 });

@@ -15,7 +15,7 @@ function renderCart() {
   const count=cart.reduce((sum,x)=>sum+x.qty,0), total=cart.reduce((sum,x)=>sum+PRODUCTS.find(p=>p.id===x.id).price*x.qty,0);
   document.querySelectorAll('[data-cart-count]').forEach(e=>e.textContent=count);
   $('#cartTotal').textContent=money(total);
-  $('#cartRows').innerHTML=cart.length?cart.map(x=>{const p=PRODUCTS.find(p=>p.id===x.id);return `<div class="cart-row"><a href="product.html?id=${p.id}"><small>${esc(p.brand)}</small><strong>${esc(p.name)}</strong><span>${money(p.price)} / шт.</span></a><div class="quantity"><button data-qty="${p.id}" data-delta="-1" aria-label="Зменшити кількість ${esc(p.name)}" ${x.qty===1?'disabled':''}>−</button><span aria-label="Кількість">${x.qty}</span><button data-qty="${p.id}" data-delta="1" aria-label="Збільшити кількість ${esc(p.name)}" ${x.qty===99?'disabled':''}>+</button></div><b>${money(p.price*x.qty)}</b><button class="text-button" data-remove="${p.id}" aria-label="Видалити ${esc(p.name)}">Видалити</button></div>`}).join(''):'<div class="empty"><h3>Кошик поки порожній</h3><p>Додайте потрібні товари з каталогу.</p><button class="primary" data-close>Продовжити покупки</button></div>';
+  $('#cartRows').innerHTML=cart.length?cart.map(x=>{const p=PRODUCTS.find(p=>p.id===x.id);return `<div class="cart-row"><a class="cart-product" href="product.html?id=${p.id}"><span class="cart-thumb">${imageMarkup(p)}</span><span class="cart-product-copy"><small>${esc(p.brand)}</small><strong>${esc(p.name)}</strong><span>${money(p.price)} / шт.</span></span></a><div class="quantity"><button data-qty="${p.id}" data-delta="-1" aria-label="Зменшити кількість ${esc(p.name)}" ${x.qty===1?'disabled':''}>−</button><span aria-label="Кількість">${x.qty}</span><button data-qty="${p.id}" data-delta="1" aria-label="Збільшити кількість ${esc(p.name)}" ${x.qty===99?'disabled':''}>+</button></div><b>${money(p.price*x.qty)}</b><button class="text-button" data-remove="${p.id}" aria-label="Видалити ${esc(p.name)}">Видалити</button></div>`}).join(''):'<div class="empty"><h3>Кошик поки порожній</h3><p>Додайте потрібні товари з каталогу.</p><button class="primary" data-close>Продовжити покупки</button></div>';
   $('#checkoutOpen').disabled=!cart.length;
 }
 function saveCart() { storage.set('av-cart3',cart); renderCart(); }
@@ -28,7 +28,7 @@ function productMarkup(p, returnQuery='') {
 function theme(value) {
   const next=value==='light'?'light':'dark'; document.documentElement.dataset.theme=next;
   try{localStorage.setItem('av-theme',next);}catch{}
-  document.querySelectorAll('[data-theme-toggle]').forEach(b=>{b.textContent=next==='light'?'◐':'◑';b.setAttribute('aria-label',next==='light'?'Увімкнути темну тему':'Увімкнути світлу тему');});
+  document.querySelectorAll('[data-theme-toggle]').forEach(b=>{b.innerHTML=uiIcon(next==='light'?'moon':'sun');b.setAttribute('aria-label',next==='light'?'Увімкнути темну тему':'Увімкнути світлу тему');});
 }
 let initialTheme='dark';try{initialTheme=localStorage.getItem('av-theme')||'dark';}catch{}theme(initialTheme);
 const MODELS = {
@@ -120,3 +120,5 @@ document.querySelectorAll('dialog').forEach(d=>{
 $('#checkoutOpen').onclick=()=>openCheckout(false);
 window.addEventListener('storage',e=>{if(e.key==='av-cart3'){cart=Core.cleanCart(storage.get('av-cart3',[]),PRODUCTS);renderCart();}});
 renderCart();renderVehicle();contactsMarkup();
+
+document.querySelectorAll('[data-ui-icon]').forEach(el=>el.innerHTML=uiIcon(el.dataset.uiIcon));
