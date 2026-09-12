@@ -42,6 +42,7 @@ function render(){
  const result=Core.filter(PRODUCTS,state);
  $('#products').className='products '+view;
  $('#products').innerHTML=result.length?result.slice(0,state.limit).map(p=>productMarkup(p,Core.query(state))).join(''):`<div class="empty"><h3>За цими умовами товарів немає</h3><p>Спробуйте прибрати один фільтр або перевірте артикул. Відсутність у демо-каталозі не означає, що товар неможливо замовити.</p><button class="primary" data-reset="all">Скинути фільтри й пошук</button><button class="secondary" data-open-request>Підготувати запит на деталь</button></div>`;
+ $('#showFilterResults').textContent=`Показати товари (${result.length})`;
  $('#resultInfo').textContent=`${result.length} товарів · демо-каталог`;
  $('#catalogTitle').textContent=state.q?'Результати пошуку':state.cat==='all'?'Каталог товарів':CATEGORIES.find(c=>c.id===state.cat)?.name||'Каталог';
  $('#q').value=state.q;$('#sort').value=state.sort;
@@ -73,3 +74,5 @@ $('#resetAll').onclick=()=>reset('all');
 $('#filterToggle').onclick=()=>{const open=$('#filterToggle').getAttribute('aria-expanded')!=='true';$('#filterToggle').setAttribute('aria-expanded',String(open));$('#filterPanel').classList.toggle('expanded',open);};
 window.addEventListener('popstate',()=>{state=Core.stateFrom(location.search);render();});
 render();
+
+$('#showFilterResults').onclick=()=>{$('#filterToggle').setAttribute('aria-expanded','false');$('#filterPanel').classList.remove('expanded');$('#products').focus({preventScroll:true});$('#products').scrollIntoView({behavior:'smooth',block:'start'});};

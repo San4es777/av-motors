@@ -84,3 +84,15 @@ test('manufacturer multi-selection uses OR and survives return URL',()=>{
  a.q('[data-brand="MOTUL"]').click();assert.equal(a.all('.product').length,2);
  const b=page('index.html',a.w.location.search);assert.equal(b.all('[data-brand]:checked').length,2);assert.equal(b.all('.product').length,2);a.close();b.close();
 });
+
+test('checkout vehicle editing returns to the draft without losing delivery fields',()=>{
+ const a=page();a.q('[data-open-request]').click();a.q('#customerName').value='Тест';a.q('#phone').value='0501234567';a.change('#delivery','post');a.q('#city').value='Одеса';a.q('#branch').value='12';a.q('#orderComment').value='Фільтр';
+ a.q('#editOrderVehicle').click();assert.equal(a.q('#checkoutDialog').open,false);assert.equal(a.q('#vehicleDialog').open,true);
+ a.change('#make','Land Rover');a.change('#model','Discovery');a.q('#year').value='2018';a.submit('#vehicleForm');
+ assert.equal(a.q('#checkoutDialog').open,true);assert.match(a.q('#orderVehicleSummary').textContent,/Discovery/);assert.equal(a.q('#city').value,'Одеса');a.submit('#checkoutForm');assert.match(a.q('#requestText').value,/Discovery/);
+ a.q('#orderComment').value='Колодки';a.q('#orderComment').dispatchEvent(new a.w.Event('input',{bubbles:true}));assert.equal(a.q('#orderPreview').hidden,true);assert.equal(a.q('#requestText').value,'');
+ a.q('#editOrderVehicle').click();a.q('#vehicleDialog [data-close]').click();assert.equal(a.q('#checkoutDialog').open,true);assert.equal(a.q('#phone').value,'0501234567');a.close();
+});
+test('mobile filters close to results with focus and retained selection',()=>{
+ const a=page();a.q('#filterToggle').click();assert.equal(a.q('#filterToggle').getAttribute('aria-expanded'),'true');a.change('[data-field="type"]','Олива');assert.match(a.q('#showFilterResults').textContent,/3/);a.q('#showFilterResults').click();assert.equal(a.q('#filterPanel').classList.contains('expanded'),false);assert.equal(a.w.document.activeElement.id,'products');assert.equal(a.all('.product').length,3);a.close();
+});

@@ -86,9 +86,16 @@ function contactsMarkup() {
  document.querySelectorAll('[data-contact-links]').forEach(e=>e.innerHTML=links.length?links.map(([name,url])=>`<a class="secondary" href="${esc(url)}">${name}</a>`).join(''):'<p class="muted">Контакти продавця ще не додані. Збережіть список товарів у кошику — його можна скопіювати.</p>');
  document.querySelectorAll('[data-hours]').forEach(e=>e.textContent=c.hours||'Графік роботи уточнюється');
 }
-let requestOnly=false;
+let requestOnly=false, returnToCheckout=false;
+function renderOrderVehicle(){const c=vehicle();$('#orderVehicleSummary').textContent=c?`${c.make} ${c.model} · ${c.year}${c.engine?' · '+c.engine:''}`:'Авто не додано. Якщо потрібна перевірка сумісності, вкажіть його або VIN нижче.';}
+function invalidateDraft(){ $('#orderPreview').hidden=true;$('#requestText').value=''; }
+$('#checkoutForm').addEventListener('input',invalidateDraft);
+$('#checkoutForm').addEventListener('change',invalidateDraft);
+$('#editOrderVehicle').onclick=()=>{returnToCheckout=true;closeDialog($('#checkoutDialog'));fillVehicle();openDialog('vehicleDialog');};
+$('#vehicleDialog').addEventListener('close',()=>{if(returnToCheckout){returnToCheckout=false;renderOrderVehicle();invalidateDraft();openDialog('checkoutDialog');$('#editOrderVehicle').focus();}});
+$('#downloadRequest').onclick=()=>{if($('#orderPreview').hidden||!$('#requestText').value)return;const url=URL.createObjectURL(new Blob(['\ufeff'+$('#requestText').value],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='AV-Motors-request.txt';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Чернетку збережено у файл. Заявка ще не відправлена.');};
 function openCheckout(allowEmpty=false) {
- requestOnly=allowEmpty; if(!cart.length&&!requestOnly)return;closeDialog($('#cartDialog'));$('#orderPreview').hidden=true;$('#checkoutError').textContent='';$('#orderLines').innerHTML=cart.map(x=>{const p=PRODUCTS.find(p=>p.id===x.id);return `<div class="row"><span>${esc(p.name)} × ${x.qty}</span><b>${money(p.price*x.qty)}</b></div>`;}).join('');
+ renderOrderVehicle();requestOnly=allowEmpty; if(!cart.length&&!requestOnly)return;closeDialog($('#cartDialog'));$('#orderPreview').hidden=true;$('#checkoutError').textContent='';$('#orderLines').innerHTML=cart.map(x=>{const p=PRODUCTS.find(p=>p.id===x.id);return `<div class="row"><span>${esc(p.name)} × ${x.qty}</span><b>${money(p.price*x.qty)}</b></div>`;}).join('');
  $('#orderTotal').textContent=money(cart.reduce((s,x)=>s+PRODUCTS.find(p=>p.id===x.id).price*x.qty,0));openDialog('checkoutDialog');
 }
 $('#delivery').onchange=()=>{const ship=$('#delivery').value==='post';$('#shippingFields').hidden=!ship;$('#city').required=ship;$('#branch').required=ship;};
