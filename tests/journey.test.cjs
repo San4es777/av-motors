@@ -8,7 +8,7 @@ function page(file='index.html',search='',saved={}){
  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
  w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
  for(const [k,v]of Object.entries(saved))w.localStorage.setItem(k,JSON.stringify(v));
- for(const script of w.document.querySelectorAll('script[src]'))new vm.Script(fs.readFileSync(path.join(root,script.getAttribute('src')),'utf8'),{filename:script.getAttribute('src')}).runInContext(dom.getInternalVMContext());
+ for(const script of w.document.querySelectorAll('script[src]'))new vm.Script(fs.readFileSync(path.join(root,script.getAttribute('src').split('?')[0]),'utf8'),{filename:script.getAttribute('src')}).runInContext(dom.getInternalVMContext());
  const q=s=>w.document.querySelector(s),all=s=>[...w.document.querySelectorAll(s)];
  const change=(s,value)=>{q(s).value=value;q(s).dispatchEvent(new w.Event('change',{bubbles:true}));};
  const submit=s=>q(s).dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
