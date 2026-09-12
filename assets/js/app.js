@@ -1,32 +1,71 @@
-const C=window.AV_CATEGORIES,P=window.AV_PRODUCTS,$=s=>document.querySelector(s),fmt=n=>n.toLocaleString('uk-UA')+' ₴';
-let active='all',sub='all',brand='all',facet='all',limit=12,view=localStorage.getItem('av-view')||'list',cart=JSON.parse(localStorage.getItem('av-cart3')||'[]');
-let toastTimer;
-function toast(t,actionLabel,action){const e=$('#toast');clearTimeout(toastTimer);e.innerHTML=`<div class="added-feedback"><span>${t}</span>${actionLabel?`<button class="toast-action" id="toastAction">${actionLabel}</button>`:''}</div>`;e.classList.add('show');if(actionLabel&&action)$('#toastAction').onclick=()=>{action();e.classList.remove('show')};toastTimer=setTimeout(()=>e.classList.remove('show'),2800)}
-function scrollToId(id){const el=document.getElementById(id);if(!el)return;const h=$('#siteHeader')?.offsetHeight||0;window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+scrollY-h-12),behavior:'smooth'})}
-function setTheme(theme){document.documentElement.dataset.theme=theme;localStorage.setItem('av-theme',theme);const b=$('#themeToggle');if(b){b.textContent=theme==='light'?'🌙':'☀️';b.title=theme==='light'?'Темна тема':'Світла тема'}}
-const savedTheme=localStorage.getItem('av-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');setTheme(savedTheme);$('#themeToggle').onclick=()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light');
-function icon(type){const common='viewBox="0 0 160 120" aria-hidden="true"';const map={'Олива':`<svg ${common}><rect x="50" y="27" width="60" height="65" rx="8" fill="#2d3742" stroke="#778493"/><rect x="62" y="17" width="36" height="13" rx="3" fill="#4b5968"/><rect x="58" y="48" width="44" height="23" rx="3" fill="#f5a623"/><text x="80" y="63" fill="#111" font-size="13" text-anchor="middle" font-weight="900">5W-30</text></svg>`,'Фільтр':`<svg ${common}><rect x="43" y="37" width="74" height="46" rx="10" fill="#303a45" stroke="#7d8996"/><g stroke="#8f9aa6">${[52,63,74,85,96,107].map(x=>`<line x1="${x}" y1="42" x2="${x}" y2="78"/>`).join('')}</g></svg>`,'Колодки':`<svg ${common}><path d="M38 71c8-25 22-37 42-37s34 12 42 37l-17 12H55z" fill="#303a45" stroke="#87929e"/><ellipse cx="80" cy="60" rx="20" ry="12" fill="#f5a623" opacity=".85"/></svg>`,'Диск':`<svg ${common}><circle cx="80" cy="60" r="39" fill="#3a444f" stroke="#a2adb8" stroke-width="3"/><circle cx="80" cy="60" r="16" fill="#121820" stroke="#b8c1ca"/><circle cx="80" cy="60" r="6" fill="#f5a623"/></svg>`,'Амортизатор':`<svg ${common}><rect x="72" y="22" width="16" height="64" rx="6" fill="#586675"/><rect x="64" y="49" width="32" height="27" rx="5" fill="#303a45" stroke="#87929e"/><line x1="80" y1="14" x2="80" y2="105" stroke="#d3d9df" stroke-width="5"/></svg>`,'АКБ':`<svg ${common}><rect x="38" y="34" width="84" height="52" rx="6" fill="#303a45" stroke="#84909c"/><rect x="50" y="25" width="15" height="10" rx="2" fill="#f5a623"/><rect x="95" y="25" width="15" height="10" rx="2" fill="#f5a623"/><rect x="50" y="48" width="60" height="18" rx="3" fill="#151b22"/><text x="80" y="61" fill="#e8edf2" text-anchor="middle" font-size="12" font-weight="800">70–80 Ah</text></svg>`,'Свічка':`<svg ${common}><rect x="74" y="22" width="12" height="71" rx="4" fill="#e8edf2"/><rect x="67" y="44" width="26" height="25" rx="4" fill="#c8d0d8"/><line x1="80" y1="93" x2="80" y2="108" stroke="#f5a623" stroke-width="4"/></svg>`,'Ремінь':`<svg ${common}><path d="M45 60c0-25 70-25 70 0s-70 25-70 0Z" fill="none" stroke="#778493" stroke-width="12"/><path d="M56 60c0-14 48-14 48 0" fill="none" stroke="#f5a623" stroke-width="4"/></svg>`,'Лампа':`<svg ${common}><path d="M80 22c-19 0-31 15-31 30 0 13 8 21 17 28v11h28V80c9-7 17-15 17-28 0-15-12-30-31-30Z" fill="#e9eef3"/><rect x="67" y="91" width="26" height="12" rx="3" fill="#687583"/><circle cx="80" cy="53" r="11" fill="#f5a623"/></svg>`};return map[type]||`<svg ${common}><rect x="44" y="34" width="72" height="52" rx="12" fill="#303a45" stroke="#7d8996"/></svg>`}
-function categoryIcon(id){const paths={service:'<path d="M8 3h8l1 4-2 14H9L7 7z"/><path d="M9 7h6"/><path d="M10 12h4"/>',brakes:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M17 7l3 2v6l-3 2"/>',suspension:'<path d="M12 2v20M8 4h8M7 8h10M8 12h8M7 16h10M8 20h8"/>',engine:'<path d="M5 8h11l3 3v6H6l-2-3V9z"/><path d="M8 8V5h5v3M19 12h2"/>',electrics:'<rect x="5" y="7" width="14" height="11" rx="2"/><path d="M8 7V4M16 7V4M9 12h6M12 9v6"/>',care:'<path d="M6 19h12l2-7-4-5H8l-4 5z"/><path d="M9 7l1-3h4l1 3M8 14h8"/>',all:'<rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/>'};return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[id]||paths.all}</svg>`}
-function productCard(p){return `<article class="product" data-product="${p.id}"><div class="product-visual"><span class="tag">${p.type}</span>${icon(p.type)}<div class="product-type-label">${p.type}</div></div><div class="product-info"><div class="brandname">${p.brand}</div><h3>${p.name}</h3></div><div class="meta"><span>Арт. ${p.sku}</span><span class="status ${p.state}">${p.fit}</span></div><div class="price">${fmt(p.price)}</div><button class="buy" data-add="${p.id}">У кошик</button></article>`}
-function current(){let a=P.filter(p=>active==='all'||p.cat===active);if(sub!=='all')a=a.filter(p=>p.type===sub);if(brand!=='all')a=a.filter(p=>p.brand===brand);if(facet!=='all')a=a.filter(p=>p.facet===facet);const s=$('#sort').value;if(s==='cheap')a.sort((x,y)=>x.price-y.price);if(s==='expensive')a.sort((x,y)=>y.price-x.price);if(s==='brand')a.sort((x,y)=>x.brand.localeCompare(y.brand));return a}
-function updateContext(){const c=C.find(x=>x.id===active);const name=active==='all'?'Усі товари':c?.name||'Каталог';$('#catalogContext').textContent=name;$('#catalogTitle').textContent=name;document.querySelectorAll('.category').forEach(x=>x.classList.toggle('selected',x.dataset.go===active))}
-function wireProducts(){document.querySelectorAll('[data-product]').forEach(e=>e.onclick=x=>{if(x.target.closest('[data-add]'))return;location.href=`product.html?id=${e.dataset.product}`});document.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();add(+b.dataset.add)})}
-function render(){const a=current();const box=$('#products');box.classList.toggle('grid-mode',view==='grid');box.classList.toggle('list-mode',view==='list');box.innerHTML=a.slice(0,limit).map(productCard).join('')||'<div class="empty">Нічого не знайдено за цими фільтрами.</div>';$('#resultInfo').textContent=`${a.length} товарів · демо-дані`;$('#loadMore').style.display=limit<a.length?'block':'none';updateContext();wireProducts()}
-function renderFilters(){$('#filters').innerHTML=C.map(c=>`<button class="chip ${active===c.id?'on':''}" data-filter="${c.id}">${c.name}</button>`).join('');document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>selectCategory(b.dataset.filter,false))}
-function selectCategory(id,scroll=true){active=id;sub=brand=facet='all';limit=12;renderFilters();renderContext();render();renderCats();if(scroll)scrollToId('catalog')}
-function renderContext(){const list=P.filter(p=>active==='all'||p.cat===active),types=[...new Set(list.map(p=>p.type))],brands=[...new Set(list.map(p=>p.brand))].sort(),facets=[...new Set(list.map(p=>p.facet))].sort();$('#subfilters').innerHTML=active==='all'?'':`<button class="chip alt ${sub==='all'?'on':''}" data-sub="all">Усі типи</button>`+types.map(x=>`<button class="chip alt ${sub===x?'on':''}" data-sub="${x}">${x}</button>`).join('');document.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{sub=b.dataset.sub;facet='all';renderContext();render()});$('#facets').innerHTML=`<select class="filter-select" id="brandFilter"><option value="all">Усі бренди</option>${brands.map(x=>`<option ${brand===x?'selected':''}>${x}</option>`).join('')}</select><select class="filter-select" id="facetFilter"><option value="all">${active==='service'?'Параметр / в’язкість':'Параметр'}</option>${facets.map(x=>`<option ${facet===x?'selected':''}>${x}</option>`).join('')}</select>`;$('#brandFilter').onchange=e=>{brand=e.target.value;render()};$('#facetFilter').onchange=e=>{facet=e.target.value;render()}}
-function renderCats(){$('#cats').innerHTML=C.slice(1).map(c=>`<button class="category ${active===c.id?'selected':''}" data-go="${c.id}"><span class="cat-icon">${categoryIcon(c.id)}</span><span class="cat-copy"><b>${c.name}</b><small>${c.desc}</small></span></button>`).join('');wireGo()}
-function wireGo(){document.querySelectorAll('[data-go]').forEach(e=>e.onclick=ev=>{ev.preventDefault();selectCategory(e.dataset.go,true)})}
-function add(id){let x=cart.find(i=>i.id===id);x?x.qty++:cart.push({id,qty:1});save();const p=P.find(x=>x.id===id);toast(`✓ ${p.name} додано`,'Кошик',openCart)}
-function save(){localStorage.setItem('av-cart3',JSON.stringify(cart));renderCart()}
-function renderCart(){const n=cart.reduce((s,x)=>s+x.qty,0);$('#countTop').textContent=n;$('#countBottom').textContent=n;const rows=cart.map(x=>{let p=P.find(q=>q.id===x.id);return `<div class="cartitem"><div><b>${p.name}</b><div class="sub">${x.qty} × ${fmt(p.price)}</div></div><button class="ghost" data-del="${x.id}">×</button></div>`}).join('')||'<p class="sub">Кошик порожній</p>';$('#cartRows').innerHTML=rows;$('#summary').innerHTML=rows;const total=cart.reduce((s,x)=>s+P.find(p=>p.id===x.id).price*x.qty,0);$('#cartTotal').textContent=fmt(total);$('#sumTotal').textContent=fmt(total);document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{cart=cart.filter(x=>x.id!==+b.dataset.del);save()})}
-function openCart(){$('#cart').classList.add('show');$('#cart').classList.remove('just-added');void $('#cart').offsetWidth;$('#cart').classList.add('just-added')}
-function updateCarUI(c){if(c){const title=`${c.make} ${c.model} · ${c.year}`;$('#carTitle').textContent=title;$('#carHint').textContent=c.engine||'Авто збережено';$('#catalogCarTitle').textContent=title;$('#catalogCarHint').textContent=c.engine||'Авто збережено'}else{$('#catalogCarTitle').textContent='Не обране';$('#catalogCarHint').textContent='Для точнішого підбору оберіть автомобіль'}}
-function toggleCar(open=true){$('#carForm').hidden=open?false:!$('#carForm').hidden;if(open)setTimeout(()=>scrollToId('garage'),20)}
-$('#toggleCar').onclick=()=>toggleCar(false);$('#heroCar').onclick=()=>toggleCar(true);$('#bottomCar').onclick=()=>toggleCar(true);$('#catalogCarBtn').onclick=()=>toggleCar(true);$('#vinOpen').onclick=()=>{toggleCar(true);setTimeout(()=>$('#vin').focus(),250)};$('#saveCar').onclick=()=>{const make=$('#make').value,model=$('#model').value.trim(),year=$('#year').value;if(!make||!model||!year)return toast('Оберіть марку, модель і рік');const c={make,model,year,engine:$('#engine').value.trim()};localStorage.setItem('av-car',JSON.stringify(c));updateCarUI(c);$('#carForm').hidden=true;toast('Авто збережено')};$('#fitProducts').onclick=()=>{scrollToId('catalog');toast('Точний fitment підключимо після даних постачальника')};$('#vinBtn').onclick=()=>{const v=$('#vin').value.trim();toast(v.length===17?'VIN прийнято для перевірки':'VIN має містити 17 символів')};
-$('#listView').onclick=()=>{view='list';localStorage.setItem('av-view',view);$('#listView').classList.add('on');$('#gridView').classList.remove('on');render()};$('#gridView').onclick=()=>{view='grid';localStorage.setItem('av-view',view);$('#gridView').classList.add('on');$('#listView').classList.remove('on');render()};if(view==='grid'){$('#gridView').classList.add('on');$('#listView').classList.remove('on')}
-$('#sort').onchange=render;$('#loadMore').onclick=()=>{limit+=12;render()};$('#search').onsubmit=e=>{e.preventDefault();const q=$('#q').value.toLowerCase().trim();if(!q)return;const a=P.filter(p=>(p.name+' '+p.brand+' '+p.sku+' '+p.type).toLowerCase().includes(q));$('#products').innerHTML=a.map(productCard).join('')||'<div class="empty">Нічого не знайдено.</div>';$('#resultInfo').textContent=`Знайдено: ${a.length}`;$('#catalogContext').textContent='Результати пошуку';$('#catalogTitle').textContent='Результати пошуку';scrollToId('catalog');wireProducts()};
-$('#cartTop').onclick=openCart;$('#bottomCart').onclick=openCart;$('#closeCart').onclick=()=>$('#cart').classList.remove('show');$('#toCheckout').onclick=()=>{$('#cart').classList.remove('show');setTimeout(()=>scrollToId('checkout'),20)};$('#order').onclick=()=>toast('Демо: відправку замовлення підключимо до бекенду');$('#heroCatalog').onclick=e=>{e.preventDefault();scrollToId('catalog')};
-const saved=JSON.parse(localStorage.getItem('av-car')||'null');if(saved){$('#make').value=saved.make;$('#model').value=saved.model;$('#year').value=saved.year;$('#engine').value=saved.engine||''}updateCarUI(saved);
-function updateBottom(){const y=scrollY+innerHeight*.35;let key='home';for(const [id,k] of [['catalog','catalog'],['garage','car'],['checkout','cart']]){const el=document.getElementById(id);if(el&&el.offsetTop<=y)key=k}document.querySelectorAll('[data-bottom]').forEach(x=>x.classList.toggle('active',x.dataset.bottom===key))}addEventListener('scroll',updateBottom,{passive:true});
-renderFilters();renderContext();render();renderCats();renderCart();wireGo();updateBottom();
+'use strict';
+let state=Core.stateFrom(location.search), view=storage.get('av-view-v2','grid');
+if(!['grid','list'].includes(view))view='grid';
+const fieldNames={type:'Тип товару',brand:'Виробник',parameter:'Параметр',volume:'Об’єм',capacity:'Ємність',approval:'Специфікація / допуск',diameter:'Діаметр'};
+function syncURL(){const q=Core.query(state);history.replaceState(null,'',location.pathname+(q?'?'+q:'')+location.hash);}
+function field(label,key,values) {
+ if(!values.length&&state[key]==='all')return '';
+ if(state[key]!=='all'&&!values.includes(state[key]))values=[state[key],...values];
+ return `<label class="field">${esc(label)}<select data-field="${key}" aria-label="${esc(label)}"><option value="all">Усі</option>${values.map(v=>`<option value="${esc(v)}" ${state[key]===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>`;
+}
+function renderFilters() {
+ const type=state.type;
+ const parameterNames={'Олива':'В’язкість SAE','Фільтр':'Вид фільтра','АКБ':'Технологія','Лампа':'Цоколь','Рідина':'Специфікація','Свічка':'Тип електрода','Хімія':'Призначення','Догляд':'Призначення'};
+ const keys=['type','brand'];if(type!=='all')keys.push('parameter','volume','capacity','approval','diameter');
+ $('#facets').innerHTML=keys.map(k=>field(k==='parameter'?(parameterNames[type]||'Різновид'):fieldNames[k],k,Core.options(PRODUCTS,state,k))).join('');
+ $('#facets').querySelectorAll('select').forEach(el=>el.onchange=()=>{
+ const k=el.dataset.field;state[k]=el.value;
+ if(k==='type'){state.brand=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';}
+ state.limit=12;render();
+ });
+ $('#minPrice').value=state.min;$('#maxPrice').value=state.max;
+ $('#filterNote').textContent=type==='Олива'?'Допуск виробника авто перевіряють окремо: однакова в’язкість не підтверджує сумісність.':type==='all'?'Оберіть тип товару, щоб побачити його спеціальні параметри.':'Показані лише параметри з демонстраційного каталогу. Точні характеристики потрібно підтвердити.';
+}
+function renderCategories(){
+ $('#cats').innerHTML=CATEGORIES.map(c=>`<button class="category ${state.cat===c.id?'selected':''}" data-category="${c.id}" aria-pressed="${state.cat===c.id}"><span class="cat-icon">${categoryIcon(c.id)}</span><span><b>${c.id==='all'?'Усі товари':esc(c.name)}</b><small>${c.id==='all'?'Повний каталог':esc(c.desc)}</small></span></button>`).join('');
+}
+function renderSelected(){
+ const items=[];
+ if(state.q)items.push(['q','Пошук: '+state.q]);
+ if(state.cat!=='all')items.push(['cat',CATEGORIES.find(c=>c.id===state.cat)?.name||state.cat]);
+ for(const k of ['type','brand','parameter','volume','capacity','approval','diameter'])if(state[k]!=='all')items.push([k,state[k]]);
+ if(state.min!==''||state.max!=='')items.push(['price',`Ціна: ${state.min||'0'}–${state.max||'∞'} ₴`]);
+ $('#selectedFilters').innerHTML=items.map(([key,label])=>`<button class="chip" data-reset="${key}" aria-label="Прибрати ${esc(label)}">${esc(label)} <span aria-hidden="true">×</span></button>`).join('');
+ $('#resetAll').hidden=!items.length;
+ $('#filterCount').textContent=items.length?` (${items.length})`:'';
+}
+function render(){
+ const result=Core.filter(PRODUCTS,state);
+ $('#products').className='products '+view;
+ $('#products').innerHTML=result.length?result.slice(0,state.limit).map(p=>productMarkup(p,Core.query(state))).join(''):`<div class="empty"><h3>За цими умовами товарів немає</h3><p>Спробуйте прибрати один фільтр або перевірте артикул. Відсутність у демо-каталозі не означає, що товар неможливо замовити.</p><button class="primary" data-reset="all">Скинути фільтри й пошук</button><button class="secondary" data-open-request>Підготувати запит на деталь</button></div>`;
+ $('#resultInfo').textContent=`${result.length} товарів · демо-каталог`;
+ $('#catalogTitle').textContent=state.q?'Результати пошуку':state.cat==='all'?'Каталог товарів':CATEGORIES.find(c=>c.id===state.cat)?.name||'Каталог';
+ $('#q').value=state.q;$('#sort').value=state.sort;
+ $('#loadMore').hidden=state.limit>=result.length;
+ $('#loadMore').textContent=`Показати ще ${Math.min(12,Math.max(0,result.length-state.limit))}`;
+ $('#shownCount').textContent=result.length?`Показано ${Math.min(state.limit,result.length)} з ${result.length}`:'';
+ document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));
+ renderCategories();renderFilters();renderSelected();syncURL();
+}
+function reset(key){
+ if(key==='all'){state={...Core.defaults};}
+ else if(key==='cat'){state.cat=state.type=state.brand=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';}
+ else if(key==='type'){state.type=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';}
+ else if(key==='price'){state.min=state.max='';}
+ else state[key]=Core.defaults[key];
+ state.limit=12;render();
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button,a');if(!b)return;
+ if(b.matches('[data-category]')){e.preventDefault();state.cat=b.dataset.category;state.type=state.brand=state.parameter=state.volume=state.capacity=state.approval=state.diameter='all';state.limit=12;render();}
+ if(b.matches('[data-reset]'))reset(b.dataset.reset);
+ if(b.matches('[data-view]')){view=b.dataset.view;storage.set('av-view-v2',view);render();}
+});
+$('#search').onsubmit=e=>{e.preventDefault();state.q=$('#q').value.trim();state.limit=12;render();$('#catalog').scrollIntoView({behavior:'smooth'});};
+$('#sort').onchange=e=>{state.sort=e.target.value;render();};
+$('#priceForm').onsubmit=e=>{e.preventDefault();const min=$('#minPrice').value,max=$('#maxPrice').value;if(min!==''&&max!==''&&Number(min)>Number(max)){$('#priceError').textContent='Мінімальна ціна не може перевищувати максимальну.';return;}$('#priceError').textContent='';state.min=min;state.max=max;state.limit=12;render();};
+$('#loadMore').onclick=()=>{state.limit+=12;render();};
+$('#resetAll').onclick=()=>reset('all');
+$('#filterToggle').onclick=()=>{const open=$('#filterToggle').getAttribute('aria-expanded')!=='true';$('#filterToggle').setAttribute('aria-expanded',String(open));$('#filterPanel').classList.toggle('expanded',open);};
+window.addEventListener('popstate',()=>{state=Core.stateFrom(location.search);render();});
+render();

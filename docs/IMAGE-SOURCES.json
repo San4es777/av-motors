@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "image": "assets/img/products/liqui-moly-8973.png",
+    "source": "https://www.liqui-moly.com/en/ie/top-tec-4200-5w-30-new-generation-p000323.html#8973",
+    "imageSource": "https://www.liqui-moly.com/media/catalog/product/8/9/8973_Top_Tec_4200_5W_30_New_Generation_5l_92fa.png?w=800&h=533&func=bound&sharp=1&org_if_sml=1&force_format=webp,original&force_format=webp%2Coriginal",
+    "imageRetrieved": "2026-09-12",
+    "bytes": 394363,
+    "rights": "Manufacturer catalog image; no open license verified. Confirm commercial reuse before public launch."
+  },
+  {
+    "id": 2,
+    "image": "assets/img/products/mann-hu7019z.jpg",
+    "source": "https://www.mann-filter.com/ua-uk/catalog/search-results/product.html/hu7019z_mann-filter.html",
+    "imageSource": "https://s7g10.scene7.com/is/image/mannhummel/HU_7019_z?qlt=82&ts=1784125799249&dpr=off",
+    "imageRetrieved": "2026-09-12",
+    "bytes": 122307,
+    "rights": "Manufacturer catalog image; no open license verified. Confirm commercial reuse before public launch."
+  },
+  {
+    "id": 4,
+    "image": "assets/img/products/brembo-p85020.webp",
+    "source": "https://www.bremboparts.com/europe/en/catalogue/pad/P_85_020?compatibility=true",
+    "imageSource": "https://www.bremboparts.com/en/media/product/images/1920-1920-Fix/9e9c81ed-a8df-40c7-9c23-7c82ce82a89f",
+    "imageRetrieved": "2026-09-12",
+    "bytes": 111220,
+    "rights": "Manufacturer catalog image; no open license verified. Confirm commercial reuse before public launch."
+  },
+  {
+    "id": 6,
+    "image": "assets/img/products/brembo-09a20011.webp",
+    "source": "https://www.bremboparts.com/europe/en/catalogue/disc/09-A200-11",
+    "imageSource": "https://www.bremboparts.com/en/media/product/images/1920-1920-Fix/d7e78063-25a5-40ac-830f-df30bc7466b6",
+    "imageRetrieved": "2026-09-12",
+    "bytes": 64912,
+    "rights": "Manufacturer catalog image; no open license verified. Confirm commercial reuse before public launch."
+  }
+]
