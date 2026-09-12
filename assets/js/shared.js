@@ -14,6 +14,7 @@ function notify(message) { const active=document.querySelector('dialog[open]'); 
 function renderCart() {
   const count=cart.reduce((sum,x)=>sum+x.qty,0), total=cart.reduce((sum,x)=>sum+PRODUCTS.find(p=>p.id===x.id).price*x.qty,0);
   document.querySelectorAll('[data-cart-count]').forEach(e=>e.textContent=count);
+  document.querySelectorAll('.cart-button').forEach(b=>b.setAttribute('aria-label',`Кошик ${count}`));
   $('#cartTotal').textContent=money(total);
   $('#cartRows').innerHTML=cart.length?cart.map(x=>{const p=PRODUCTS.find(p=>p.id===x.id);return `<div class="cart-row"><a class="cart-product" href="product.html?id=${p.id}"><span class="cart-thumb">${imageMarkup(p)}</span><span class="cart-product-copy"><small>${esc(p.brand)}</small><strong>${esc(p.name)}</strong><span>${money(p.price)} / шт.</span></span></a><div class="quantity"><button data-qty="${p.id}" data-delta="-1" aria-label="Зменшити кількість ${esc(p.name)}" ${x.qty===1?'disabled':''}>−</button><span aria-label="Кількість">${x.qty}</span><button data-qty="${p.id}" data-delta="1" aria-label="Збільшити кількість ${esc(p.name)}" ${x.qty===99?'disabled':''}>+</button></div><b>${money(p.price*x.qty)}</b><button class="text-button" data-remove="${p.id}" aria-label="Видалити ${esc(p.name)}">Видалити</button></div>`}).join(''):'<div class="empty"><h3>Кошик поки порожній</h3><p>Додайте потрібні товари з каталогу.</p><button class="primary" data-close>Продовжити покупки</button></div>';
   $('#checkoutOpen').disabled=!cart.length;
@@ -26,7 +27,7 @@ function productMarkup(p, returnQuery='') {
   return `<article class="product"><a class="product-visual" href="${esc(href)}" aria-label="Переглянути ${esc(p.name)}">${imageMarkup(p)}</a><div class="product-info"><span class="brandname">${esc(p.brand)}</span><h3><a href="${esc(href)}">${esc(p.name)}</a></h3><span class="sku">Арт. ${esc(p.sku)}</span><p class="product-spec">${[p.parameter,p.volume,p.capacity].filter(Boolean).map(esc).join(' · ')}</p><span class="availability">Наявність уточнюється</span></div><div class="product-purchase"><strong>${money(p.price)}</strong><small>демо-ціна</small><button class="primary" data-add="${p.id}" aria-label="Додати ${esc(p.name)} у кошик">У кошик <span aria-hidden="true">+</span></button></div></article>`;
 }
 function theme(value) {
-  const next=value==='light'?'light':'dark'; document.documentElement.dataset.theme=next;
+  const next=value==='light'?'light':'dark'; document.querySelectorAll('[data-brand-logo]').forEach(el=>el.src=`assets/img/logo${next==='light'?'-light':''}.svg?v=06`); document.documentElement.dataset.theme=next;
   try{localStorage.setItem('av-theme',next);}catch{}
   document.querySelectorAll('[data-theme-toggle]').forEach(b=>{b.innerHTML=uiIcon(next==='light'?'moon':'sun');b.setAttribute('aria-label',next==='light'?'Увімкнути темну тему':'Увімкнути світлу тему');});
 }
