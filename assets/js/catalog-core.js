@@ -6,7 +6,7 @@
 })(typeof window !== 'undefined' ? window : globalThis, function() {
   const normalize = value => String(value || '').normalize('NFKC').toLocaleLowerCase('uk-UA').replace(/[^\p{L}\p{N}]/gu, '');
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const defaults = {cat:'all',type:'all',brand:'all',parameter:'all',volume:'all',capacity:'all',approval:'all',standard:'all',diameter:'all',q:'',min:'',max:'',sort:'popular',limit:12};
+  const defaults = {cat:'all',type:'all',brand:'all',parameter:'all',volume:'all',capacity:'all',approval:'all',standard:'all',diameter:'all',api:'all',acea:'all',height:'all',width:'all',thickness:'all',brakeSystem:'all',discType:'all',q:'',min:'',max:'',sort:'popular',limit:12};
   function stateFrom(search) {
     const params = new URLSearchParams(search), state = {...defaults};
     for (const k of Object.keys(defaults)) if (params.has(k)) state[k] = params.get(k);
@@ -22,8 +22,13 @@
   }
   function enrich(product) {
     const p = {...product};
-    p.parameter = p.facet;
+    p.categories = p.categories || [p.cat];
+    p.parameter = p.facet === p.type ? '' : p.facet;
+    const specs=p.specifications||{};
+    for(const [key,label] of Object.entries({height:'Висота',width:'Ширина',thickness:'Товщина',brakeSystem:'Гальмівна система',discType:'Тип диска'}))p[key]=specs[label]||'';
     p.standard = (p.approvals || []).filter(v => /^(ACEA|API) /.test(v));
+    p.api = p.standard.filter(v=>v.startsWith('API '));
+    p.acea = p.standard.filter(v=>v.startsWith('ACEA '));
     p.approval = (p.approvals || []).filter(v => !/^(ACEA|API) /.test(v));
     const volume = p.name.match(/(\d+(?:[.,]\d+)?)\s*(мл|L|л)(?=\s|$|[^\p{L}])/iu);
     p.volume = volume ? `${volume[1]} ${volume[2].toLowerCase() === 'мл' ? 'мл' : 'л'}` : '';
@@ -49,9 +54,9 @@
   function filter(products, state, ignore = '') {
     const words = String(state.q || '').trim().split(/\s+/).map(searchTerm).filter(Boolean);
     let result = products.filter(p => {
-      const haystack = normalize([p.name,p.brand,p.sku,p.type,...(p.oem || [])].join(' '));
+      const haystack = normalize([p.name,p.brand,p.sku,p.type,p.parameter,p.volume,p.capacity,...(p.approvals||[]),...Object.values(p.specifications||{}),...(p.oem || [])].join(' '));
       return words.every(w => haystack.includes(w)) &&
-        ['cat','type','brand','parameter','volume','capacity','approval','standard','diameter'].every(k => ignore === k || !state[k] || state[k] === 'all' || (k === 'brand' ? state[k].split('|').includes(p[k]) : Array.isArray(p[k]) ? p[k].includes(state[k]) : p[k] === state[k])) &&
+        ['cat','type','brand','parameter','volume','capacity','approval','standard','diameter','api','acea','height','width','thickness','brakeSystem','discType'].every(k => ignore === k || !state[k] || state[k] === 'all' || (k === 'cat' ? (p.categories||[p.cat]).includes(state[k]) : k === 'brand' ? state[k].split('|').includes(p[k]) : Array.isArray(p[k]) ? p[k].includes(state[k]) : p[k] === state[k])) &&
         (ignore === 'price' || state.min === '' || p.price >= Number(state.min)) &&
         (ignore === 'price' || state.max === '' || p.price <= Number(state.max));
     });

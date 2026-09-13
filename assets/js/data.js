@@ -99,3 +99,6 @@ const verifiedMedia=[
   }
 ];
 for (const media of verifiedMedia) { const item=window.AV_PRODUCTS.find(p=>p.id===media.id); if(item)Object.assign(item,media); }
+
+// One product record, discoverable from both relevant categories.
+for(const item of window.AV_PRODUCTS)if(item.type==='Свічка')item.categories=['service','engine'];

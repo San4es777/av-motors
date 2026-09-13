@@ -74,7 +74,7 @@ test('oil volume keeps type navigation and unavailable approvals visible',()=>{
  const a=page();a.q('[data-category="service"]').click();a.change('[data-field="type"]','Олива');a.change('[data-field="volume"]','4 л');
  assert.equal(a.all('.product').length,1);
  assert.ok(a.all('[data-field="type"] option').some(o=>o.value==='Фільтр'&&!o.disabled));
- assert.ok(a.q('[data-field="approval"]'));assert.ok(a.q('[data-field="standard"]'));
+ assert.ok(a.q('[data-field="approval"]'));assert.ok(a.q('[data-field="api"]'));assert.ok(a.q('[data-field="acea"]'));
  assert.ok(a.all('[data-field="approval"] option').filter(o=>o.value!=='all').every(o=>o.disabled));
  a.change('[data-field="type"]','Фільтр');assert.equal(a.q('[data-field="volume"]'),null);assert.ok(a.all('.product').length>1);a.close();
 });
@@ -100,4 +100,21 @@ test('mobile filters close to results with focus and retained selection',()=>{
 test('search suggestions expose exact articles and empty results can broaden scope',()=>{
  const a=page();a.q('#q').value='масло';a.q('#q').dispatchEvent(new a.w.Event('input',{bubbles:true}));assert.ok(a.all('#searchSuggestions option').some(x=>x.value==='8973'));
  a.submit('#search');a.q('[data-category="brakes"]').click();assert.equal(a.all('.product').length,0);a.q('[data-search-all]').click();assert.equal(a.q('#q').value,'масло');assert.equal(a.all('.product').length,3);a.close();
+});
+
+test('type counts respect retained price and empty prices have a specific recovery',()=>{
+ const a=page();a.q('#maxPrice').value='1000';a.submit('#priceForm');const battery=a.all('[data-field="type"] option').find(o=>o.value==='АКБ');assert.match(battery.textContent,/\(0\)/);assert.equal(battery.disabled,true);a.close();
+ const b=page('index.html','?type=АКБ&max=1000');assert.equal(b.all('.product').length,0);b.q('[data-reset="price"]').click();assert.equal(b.all('.product').length,3);b.close();
+});
+test('spark plugs share category entry points with no duplicated products',()=>{
+ const a=page();for(const cat of ['service','engine']){a.q(`[data-category="${cat}"]`).click();a.q('[data-subtype="Свічка"]').click();assert.equal(a.all('.product').length,2);assert.match(a.q('#products').textContent,/NGK/);assert.match(a.q('#products').textContent,/DENSO/);}a.q('[data-category="all"]').click();a.q('#loadMore').click();a.q('#loadMore').click();assert.equal(a.all('.product').length,28);a.close();
+});
+test('specification search matches filter, and missing data is explained separately',()=>{
+ const a=page();a.q('#q').value='VW 507 00';a.submit('#search');assert.equal(a.all('.product').length,1);a.q('#resetAll').click();a.change('[data-field="type"]','Олива');a.change('[data-field="approval"]','VW 507 00');assert.equal(a.all('.product').length,1);assert.match(a.q('#coverageNote').textContent,/2 інших/);a.change('[data-field="api"]','API SQ');a.change('[data-field="acea"]','ACEA C3');assert.equal(a.all('.product').length,1);assert.match(a.q('#coverageNote').textContent,/2 інших/);a.close();
+});
+test('relevant verified dimensions replace redundant type parameters',()=>{
+ const a=page();a.change('[data-field="type"]','Амортизатор');assert.equal(a.q('[data-field="parameter"]'),null);a.change('[data-field="type"]','Колодки');assert.ok(a.q('[data-field="brakeSystem"]'));a.change('[data-field="width"]','87 мм');assert.equal(a.all('.product').length,1);assert.match(a.q('#coverageNote').textContent,/2 інших/);a.change('[data-field="type"]','АКБ');assert.equal(a.q('[data-field="width"]'),null);assert.equal(a.all('.product').length,3);a.close();
+});
+test('global nonexistent query does not offer an ineffective broader search',()=>{
+ const a=page('index.html','?q=notexisting12345');assert.equal(a.q('[data-search-all]'),null);assert.ok(a.q('.empty [data-open-request]'));a.close();
 });
