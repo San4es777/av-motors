@@ -47,3 +47,10 @@ test('VIN checks format only and rejects I O Q',()=>{
 test('stored or query data is escaped before HTML rendering',()=>{
  assert.equal(Core.escape('<img src=x onerror="alert(1)">'), '&lt;img src=x onerror=&quot;alert(1)&quot;&gt;');
 });
+
+test('Russian and Ukrainian terms find the same parts without altering articles',()=>{
+ for(const [ru,uk] of [['масло','олива'],['масляный фильтр','масляний фільтр'],['аккумулятор','АКБ'],['свечи','свічка'],['ликви моли','LIQUI MOLY']]){
+ const found=Core.filter(products,{...base,q:ru}).map(p=>p.id);assert.ok(found.length>0);assert.deepEqual(found,Core.filter(products,{...base,q:uk}).map(p=>p.id));
+ }
+ assert.equal(Core.filter(products,{...base,q:'8974'}).length,0);
+});

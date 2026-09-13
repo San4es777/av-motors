@@ -96,3 +96,8 @@ test('checkout vehicle editing returns to the draft without losing delivery fiel
 test('mobile filters close to results with focus and retained selection',()=>{
  const a=page();a.q('#filterToggle').click();assert.equal(a.q('#filterToggle').getAttribute('aria-expanded'),'true');a.change('[data-field="type"]','Олива');assert.match(a.q('#showFilterResults').textContent,/3/);a.q('#showFilterResults').click();assert.equal(a.q('#filterPanel').classList.contains('expanded'),false);assert.equal(a.w.document.activeElement.id,'products');assert.equal(a.all('.product').length,3);a.close();
 });
+
+test('search suggestions expose exact articles and empty results can broaden scope',()=>{
+ const a=page();a.q('#q').value='масло';a.q('#q').dispatchEvent(new a.w.Event('input',{bubbles:true}));assert.ok(a.all('#searchSuggestions option').some(x=>x.value==='8973'));
+ a.submit('#search');a.q('[data-category="brakes"]').click();assert.equal(a.all('.product').length,0);a.q('[data-search-all]').click();assert.equal(a.q('#q').value,'масло');assert.equal(a.all('.product').length,3);a.close();
+});

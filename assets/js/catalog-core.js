@@ -33,8 +33,21 @@
     if (p.type === 'Рідина' && p.name.includes('DOT 4')) p.parameter = 'DOT 4';
     return p;
   }
+  // Conservative term aliases; article numbers are never corrected fuzzily.
+  const aliases = {
+    'масло':'олива','масла':'олива','масел':'олива','оливи':'олива',
+    'фильтр':'фільтр','фильтры':'фільтр','фільтри':'фільтр',
+    'масляный':'масляний','воздушный':'повітряний','топливный':'паливний',
+    'аккумулятор':'акб','аккумуляторы':'акб','акумулятор':'акб','акумулятори':'акб',
+    'свеча':'свічка','свечи':'свічка','свічки':'свічка','зажигания':'запалювання',
+    'тормозные':'гальмівні','тормозной':'гальмівний','колодка':'колодки',
+    'амортизаторы':'амортизатор','амортизатори':'амортизатор','ремень':'ремінь',
+    'бош':'bosch','брембо':'brembo','кастрол':'castrol','мотюль':'motul','мотуль':'motul',
+    'ликви':'liqui','лікві':'liqui','моли':'moly','молі':'moly','манн':'mann'
+  };
+  const searchTerm = value => {const word=normalize(value);return aliases[word]||word;};
   function filter(products, state, ignore = '') {
-    const words = String(state.q || '').trim().split(/\s+/).map(normalize).filter(Boolean);
+    const words = String(state.q || '').trim().split(/\s+/).map(searchTerm).filter(Boolean);
     let result = products.filter(p => {
       const haystack = normalize([p.name,p.brand,p.sku,p.type,...(p.oem || [])].join(' '));
       return words.every(w => haystack.includes(w)) &&

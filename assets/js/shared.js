@@ -27,7 +27,7 @@ function productMarkup(p, returnQuery='') {
   return `<article class="product"><a class="product-visual" href="${esc(href)}" aria-label="Переглянути ${esc(p.name)}">${imageMarkup(p)}</a><div class="product-info"><span class="brandname">${esc(p.brand)}</span><h3><a href="${esc(href)}">${esc(p.name)}</a></h3><span class="sku">Арт. ${esc(p.sku)}</span><p class="product-spec">${[p.parameter,p.volume,p.capacity].filter(Boolean).map(esc).join(' · ')}</p><span class="availability">Наявність уточнюється</span></div><div class="product-purchase"><strong>${money(p.price)}</strong><small>демо-ціна</small><button class="primary" data-add="${p.id}" aria-label="Додати ${esc(p.name)} у кошик">У кошик <span aria-hidden="true">+</span></button></div></article>`;
 }
 function theme(value) {
-  const next=value==='light'?'light':'dark'; document.querySelectorAll('[data-brand-logo]').forEach(el=>el.src=`assets/img/logo${next==='light'?'-light':''}.svg?v=06`); document.documentElement.dataset.theme=next;
+  const next=value==='light'?'light':'dark'; document.querySelectorAll('[data-brand-logo]').forEach(el=>el.src=`assets/img/logo${next==='light'?'-light':''}.svg?v=07`); document.documentElement.dataset.theme=next;
   try{localStorage.setItem('av-theme',next);}catch{}
   document.querySelectorAll('[data-theme-toggle]').forEach(b=>{b.innerHTML=uiIcon(next==='light'?'moon':'sun');b.setAttribute('aria-label',next==='light'?'Увімкнути темну тему':'Увімкнути світлу тему');});
 }
@@ -130,3 +130,7 @@ window.addEventListener('storage',e=>{if(e.key==='av-cart3'){cart=Core.cleanCart
 renderCart();renderVehicle();contactsMarkup();
 
 document.querySelectorAll('[data-ui-icon]').forEach(el=>el.innerHTML=uiIcon(el.dataset.uiIcon));
+
+// Native keyboard-accessible suggestions, shared by catalog and product pages.
+const suggestions=document.createElement('datalist');suggestions.id='searchSuggestions';$('#q').setAttribute('list',suggestions.id);$('#q').after(suggestions);
+$('#q').addEventListener('input',()=>{const q=$('#q').value.trim();suggestions.innerHTML=q.length<2?'':Core.filter(PRODUCTS,{...Core.defaults,q}).slice(0,6).map(p=>`<option value="${esc(p.sku)}" label="${esc(p.brand+' · '+p.name)}"></option>`).join('');});
