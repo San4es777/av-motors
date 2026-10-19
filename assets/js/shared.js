@@ -86,9 +86,9 @@ $('#vehicleForm').onsubmit=e=>{
  if(vin&&!Core.validVin(vin)){ $('#vehicleError').textContent='VIN має містити 17 латинських літер і цифр, без I, O та Q.';$('#vin').focus();return;}
  const c={make:$('#make').value,model:$('#model').value==='other'?$('#otherModel').value.trim():$('#model').value,year:$('#year').value,engine:$('#engine').value.trim()};
  if(!c.model)return;
- if(editingCarId){garage=garage.map(v=>v.id===editingCarId?{...c,id:editingCarId}:v);}else{c.id='car-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);garage.push(c);activeCarId=c.id;} saveGarage();renderVehicle();closeDialog($('#vehicleDialog'));notify('Авто збережено в гаражі. Сумісність ще не підтверджена.');
+ if(editingCarId){c.id=editingCarId;garage=garage.map(v=>v.id===editingCarId?c:v);activeCarId=editingCarId;}else{c.id='car-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);garage.push(c);activeCarId=c.id;} saveGarage();renderVehicle();closeDialog($('#vehicleDialog'));notify('Авто збережено в гаражі. Сумісність ще не підтверджена.');
 };
-$('#removeCar').onclick=()=>{if(!activeCarId)return;garage=garage.filter(c=>c.id!==activeCarId);activeCarId=garage[0]?.id||null;saveGarage();fillVehicle(activeCarId);renderVehicle();notify('Авто видалено з гаража');};
+$('#removeCar').onclick=()=>{const id=editingCarId||activeCarId;if(!id)return;garage=garage.filter(c=>c.id!==id);if(activeCarId===id)activeCarId=garage[0]?.id||null;saveGarage();fillVehicle(activeCarId);renderVehicle();notify('Авто видалено з гаража');};
 function contactsMarkup() {
  const c=window.AV_CONFIG;
  const links=[['Telegram',c.telegram,/^https:\/\/t\.me\//],['Viber',c.viber,/^viber:\/\/chat\?number=/],['WhatsApp',c.whatsapp,/^https:\/\/wa\.me\//]].filter(([,url,re])=>typeof url==='string'&&re.test(url));
