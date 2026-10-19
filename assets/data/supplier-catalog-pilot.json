@@ -404,7 +404,7 @@
       "article": "30208",
       "crossArticle": null,
       "manufacturer": "SKF",
-      "application": "40X80X19 - Asia360",
+      "application": "40X80X192 - Asia360",
       "note": null,
       "historicalPricesUSD": {
         "wholesale": 7.83
@@ -480,7 +480,7 @@
       "article": "30302",
       "crossArticle": null,
       "manufacturer": "KOYO",
-      "application": "15X42X14.5 AsiaAuto",
+      "application": "15X42X145 AsiaAuto",
       "note": null,
       "historicalPricesUSD": {
         "wholesale": 5.13
@@ -499,7 +499,7 @@
       "article": "30304",
       "crossArticle": null,
       "manufacturer": "SKF",
-      "application": "20X52X16.2 - Asia360",
+      "application": "20X52X162 - Asia360",
       "note": null,
       "historicalPricesUSD": {
         "wholesale": 4.48
