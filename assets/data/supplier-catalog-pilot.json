@@ -1,0 +1,609 @@
+{
+  "meta": {
+    "datasetId": "supplier-offer-pilot-2026",
+    "purpose": "architecture-test-only",
+    "generatedAt": "2026-10-20",
+    "currency": "USD",
+    "sourceFiles": [
+      {
+        "file": "predlozhenie_remni.xlsx",
+        "category": "drive_belts",
+        "sourceDate": "2016-04-20"
+      },
+      {
+        "file": "predlozhenie_podshipniki.xlsx",
+        "category": "bearings",
+        "sourceDate": "2014-06-25"
+      }
+    ],
+    "commercialUse": "User-provided files. Confirm supplier rights before public production use.",
+    "pricingPolicy": "Historical prices and stock are retained for import/audit testing only and must not be displayed as current."
+  },
+  "products": [
+    {
+      "id": "belt-22122",
+      "supplierCode": "22122",
+      "category": "drive_belts",
+      "name": "Ремень клиновой",
+      "article": "E010X1150BAN",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 3.18,
+        "smallWholesale": 3.31
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-34710",
+      "supplierCode": "34710",
+      "category": "drive_belts",
+      "name": "Ремень клиновой",
+      "article": "E010X985BAN",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 4.16,
+        "smallWholesale": 4.34
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-35225",
+      "supplierCode": "35225",
+      "category": "drive_belts",
+      "name": "Ремень клиновой",
+      "article": "E017X0940",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 7.49,
+        "smallWholesale": 7.8
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-80207",
+      "supplierCode": "80207",
+      "category": "drive_belts",
+      "name": "Ремень клиновой",
+      "article": "E017X1155",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 7.2,
+        "smallWholesale": 7.5
+      },
+      "historicalStock": "2",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-25895",
+      "supplierCode": "25895",
+      "category": "drive_belts",
+      "name": "Ремень клиновой",
+      "article": "RPF2415",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 3.72,
+        "smallWholesale": 3.88
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-25874",
+      "supplierCode": "25874",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "5PK1020",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 9.37,
+        "smallWholesale": 9.76
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-25884",
+      "supplierCode": "25884",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "6PK1130",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 9.56,
+        "smallWholesale": 9.96
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-25885",
+      "supplierCode": "25885",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "6PK1530",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 13.6,
+        "smallWholesale": 14.16
+      },
+      "historicalStock": "2",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-288",
+      "supplierCode": "288",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "6PK2160",
+      "crossArticle": null,
+      "manufacturer": "BANDO",
+      "application": "MAZ-6",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 14.41,
+        "smallWholesale": 15.01
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unverified_text"
+    },
+    {
+      "id": "belt-43860",
+      "supplierCode": "43860",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "25212-3C100",
+      "crossArticle": "E16PK2475 JC",
+      "manufacturer": "DONGIL",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 7.2,
+        "smallWholesale": 7.5
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-78433",
+      "supplierCode": "78433",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "6PK1875",
+      "crossArticle": null,
+      "manufacturer": "DONGIL",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 8.66,
+        "smallWholesale": 9.03
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-63645",
+      "supplierCode": "63645",
+      "category": "drive_belts",
+      "name": "Комплект ГРМ",
+      "article": "1365338",
+      "crossArticle": null,
+      "manufacturer": "FORD",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 24,
+        "smallWholesale": 25
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-63648",
+      "supplierCode": "63648",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "1301909",
+      "crossArticle": "5PK711 - DAYCO",
+      "manufacturer": "FORD",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 9.6,
+        "smallWholesale": 10
+      },
+      "historicalStock": "2",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-63641",
+      "supplierCode": "63641",
+      "category": "drive_belts",
+      "name": "Ремень ручейковый",
+      "article": "2266349",
+      "crossArticle": "6PK2103 - JC",
+      "manufacturer": "FORD",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 6,
+        "smallWholesale": 6.25
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "belt-60654",
+      "supplierCode": "60654",
+      "category": "drive_belts",
+      "name": "Ремень балансвала",
+      "article": "99XY19",
+      "crossArticle": "E35040 - JC",
+      "manufacturer": "Mitsuboshi",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 5.41,
+        "smallWholesale": 5.64
+      },
+      "historicalStock": "5",
+      "sourceFile": "predlozhenie_remni.xlsx",
+      "sourceDate": "2016-04-20",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "bearing-30210",
+      "supplierCode": "21342",
+      "category": "bearings",
+      "name": "Подшипник шариковый",
+      "article": "6015",
+      "crossArticle": null,
+      "manufacturer": "NTN",
+      "application": "75X115X20 AsiaAuto",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 12.11
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30211",
+      "supplierCode": "73156",
+      "category": "bearings",
+      "name": "Подшипник шариковый",
+      "article": "6208",
+      "crossArticle": null,
+      "manufacturer": "KOYO",
+      "application": "40X80X18 - Asia360",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 8.75
+      },
+      "historicalStock": "10",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30212",
+      "supplierCode": "57941",
+      "category": "bearings",
+      "name": "Подшипник шариковый",
+      "article": "6306",
+      "crossArticle": null,
+      "manufacturer": "MCB",
+      "application": "30X72X19 AsiaAuto",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 2.71
+      },
+      "historicalStock": "8",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30213",
+      "supplierCode": "91267",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30203",
+      "crossArticle": null,
+      "manufacturer": "NTN",
+      "application": "30203 - NTN",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 5
+      },
+      "historicalStock": ">10",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "cross_reference_unverified"
+    },
+    {
+      "id": "bearing-30214",
+      "supplierCode": "71228",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30208",
+      "crossArticle": null,
+      "manufacturer": "SKF",
+      "application": "40X80X192 - Asia360",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 7.83
+      },
+      "historicalStock": "8",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30215",
+      "supplierCode": "92378",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30210",
+      "crossArticle": null,
+      "manufacturer": "NTN",
+      "application": "30210 - NTN",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 13.75
+      },
+      "historicalStock": "2",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "cross_reference_unverified"
+    },
+    {
+      "id": "bearing-30216",
+      "supplierCode": "57877",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30211",
+      "crossArticle": null,
+      "manufacturer": "MCB",
+      "application": "55X100X2 AsiaAuto",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 7.16
+      },
+      "historicalStock": "1",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30217",
+      "supplierCode": "8072",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30213",
+      "crossArticle": null,
+      "manufacturer": "NTN",
+      "application": "65X120X26 AsiaAuto",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 25.5
+      },
+      "historicalStock": "5",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30218",
+      "supplierCode": "57878",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30302",
+      "crossArticle": null,
+      "manufacturer": "KOYO",
+      "application": "15X42X145 AsiaAuto",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 5.13
+      },
+      "historicalStock": "4",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30219",
+      "supplierCode": "71229",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30304",
+      "crossArticle": null,
+      "manufacturer": "SKF",
+      "application": "20X52X162 - Asia360",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 4.48
+      },
+      "historicalStock": "6",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30220",
+      "supplierCode": "58176",
+      "category": "bearings",
+      "name": "Подшипник",
+      "article": "30305",
+      "crossArticle": null,
+      "manufacturer": "SKF",
+      "application": "30305 SKF",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 5.05
+      },
+      "historicalStock": "4",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "cross_reference_unverified"
+    },
+    {
+      "id": "bearing-30221",
+      "supplierCode": "58175",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "30307",
+      "crossArticle": null,
+      "manufacturer": "SKF",
+      "application": "30307JR KOYO",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 4.89
+      },
+      "historicalStock": ">10",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "cross_reference_unverified"
+    },
+    {
+      "id": "bearing-30222",
+      "supplierCode": "71234",
+      "category": "bearings",
+      "name": "Подшипник роликовый конический",
+      "article": "32008",
+      "crossArticle": null,
+      "manufacturer": "SKF",
+      "application": null,
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 7.89
+      },
+      "historicalStock": "6",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "unknown"
+    },
+    {
+      "id": "bearing-30223",
+      "supplierCode": "30210",
+      "category": "bearings",
+      "name": "Подшипник шариковый",
+      "article": "628",
+      "crossArticle": null,
+      "manufacturer": "NSK",
+      "application": "8X24X8 AsiaAuto",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 1.19
+      },
+      "historicalStock": "4",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    },
+    {
+      "id": "bearing-30224",
+      "supplierCode": "7442",
+      "category": "bearings",
+      "name": "Подшипник шариковый",
+      "article": "5207",
+      "crossArticle": null,
+      "manufacturer": "KOYO",
+      "application": "35X72X27 AsiaAuto",
+      "note": null,
+      "historicalPricesUSD": {
+        "wholesale": 11.73
+      },
+      "historicalStock": "4",
+      "sourceFile": "predlozhenie_podshipniki.xlsx",
+      "sourceDate": "2014-06-25",
+      "dataStatus": "stale_unverified",
+      "fitmentStatus": "dimensions_only"
+    }
+  ]
+}
