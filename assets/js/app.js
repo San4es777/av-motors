@@ -19,7 +19,7 @@ function renderFilters() {
  const parameterNames={'Олива':'В’язкість SAE','Фільтр':'Вид фільтра','АКБ':'Технологія','Лампа':'Цоколь','Рідина':'Специфікація','Свічка':'Тип електрода','Хімія':'Призначення','Догляд':'Призначення'};
  const schema={'Олива':['parameter','volume','approval','api','acea'],'Фільтр':['parameter','diameter','height'],'АКБ':['parameter','capacity'],'Колодки':['brakeSystem','width','height','thickness'],'Диск':['discType','diameter','thickness','height'],'Рідина':['parameter','volume'],'Лампа':['parameter'],'Свічка':['parameter'],'Хімія':['parameter','volume'],'Догляд':['parameter','volume']};
  const keys=['type','brand',...(schema[type]||[])];if(state.standard!=='all')keys.push('standard');
- $('#facets').innerHTML=keys.map(k=>field(k==='parameter'?(parameterNames[type]||'Різновид'):fieldNames[k],k,Core.options(PRODUCTS,{...Core.defaults,cat:state.cat,type:k==='type'?'all':state.type},k))).join('');
+ $('#facets').innerHTML=keys.map(k=>field(k==='parameter'?(parameterNames[type]||'Різновид'):fieldNames[k],k,Core.options(PRODUCTS,state,k))).join('');
  $('#facets').querySelectorAll('select').forEach(el=>el.onchange=()=>{
  const k=el.dataset.field;state[k]=el.value;
  if(k==='type')chooseType(el.value);
