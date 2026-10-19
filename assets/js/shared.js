@@ -7,6 +7,9 @@ const storage = {
   set(key,value) { try {localStorage.setItem(key,JSON.stringify(value));} catch {} }
 };
 let cart = Core.cleanCart(storage.get('av-cart3',[]),PRODUCTS);
+let garage = storage.get('av-garage-v1',[]); if(!Array.isArray(garage)) garage=[];
+let activeCarId = storage.get('av-active-car-v1',null), editingCarId = null;
+function saveGarage(){storage.set('av-garage-v1',garage);storage.set('av-active-car-v1',activeCarId);}
 let lastDialogTrigger;
 function openDialog(id) { const d=document.getElementById(id); lastDialogTrigger=document.activeElement; if(!d.open)d.showModal(); document.body.classList.add('modal-open'); }
 function closeDialog(d) { d.close(); }
@@ -58,14 +61,21 @@ function renderModels(value='') {
   $('#otherModel').required=$('#model').value==='other';
   $('#otherModel').value=options.includes(value)?'':value;
 }
-function vehicle() { const c=storage.get('av-car',null); return c&&typeof c==='object'?c:null; }
+function vehicle() { return garage.find(c=>c.id===activeCarId)||null; }
+function renderGarageList(){
+ const host=$('#garageList'); if(!host)return;
+ host.innerHTML=garage.length?garage.map(c=>`<div class="garage-item ${c.id===activeCarId?'active':''}"><button type="button" class="garage-select" data-select-car="${esc(c.id)}" aria-pressed="${c.id===activeCarId}"><b>${esc(c.make)} ${esc(c.model)}</b><span>${esc(c.year)}${c.engine?' · '+esc(c.engine):''}</span>${c.id===activeCarId?'<small>Активне авто</small>':''}</button><button type="button" class="text-button" data-edit-car="${esc(c.id)}">Змінити</button><button type="button" class="text-button" data-delete-car="${esc(c.id)}" aria-label="Видалити ${esc(c.make+' '+c.model)}">Видалити</button></div>`).join(''):'<p class="muted">Гараж порожній. Додайте перший автомобіль.</p>';
+}
 function renderVehicle() {
   const c=vehicle();
-  document.querySelectorAll('[data-car-summary]').forEach(e=>e.textContent=c?`${c.make} ${c.model} · ${c.year}`:'Додати авто для запиту на підбір');
-  $('#removeCar').hidden=!c;
+  document.querySelectorAll('[data-car-summary]').forEach(e=>e.textContent=c?`${c.make} ${c.model} · ${c.year}`:garage.length?'Оберіть авто для підбору':'Додати авто для запиту на підбір');
+  $('#removeCar').hidden=!c; renderGarageList();
 }
-function fillVehicle() {
-  const c=vehicle();$('#make').value=c?.make||'';renderModels(c?.model||'');$('#year').value=c?.year||'';$('#engine').value=c?.engine||'';$('#vin').value='';$('#vehicleError').textContent='';
+function fillVehicle(id=activeCarId) {
+  const c=garage.find(v=>v.id===id)||null; editingCarId=c?.id||null;
+  $('#make').value=c?.make||'';renderModels(c?.model||'');$('#year').value=c?.year||'';$('#engine').value=c?.engine||'';$('#vin').value='';$('#vehicleError').textContent='';
+  $('#vehicleTitle').textContent=c?'Змінити автомобіль':'Додати автомобіль';
+  $('#vehicleForm button[type="submit"]').textContent=c?'Зберегти зміни':'Додати в гараж';
 }
 $('#make').innerHTML='<option value="">Оберіть марку</option>'+Object.keys(MODELS).map(x=>`<option>${esc(x)}</option>`).join('');
 $('#year').innerHTML='<option value="">Рік випуску</option>'+Array.from({length:new Date().getFullYear()-1979},(_,i)=>new Date().getFullYear()-i).map(y=>`<option>${y}</option>`).join('');
@@ -76,9 +86,9 @@ $('#vehicleForm').onsubmit=e=>{
  if(vin&&!Core.validVin(vin)){ $('#vehicleError').textContent='VIN має містити 17 латинських літер і цифр, без I, O та Q.';$('#vin').focus();return;}
  const c={make:$('#make').value,model:$('#model').value==='other'?$('#otherModel').value.trim():$('#model').value,year:$('#year').value,engine:$('#engine').value.trim()};
  if(!c.model)return;
- storage.set('av-car',c);renderVehicle();closeDialog($('#vehicleDialog'));notify('Авто збережено для підготовки заявки. Сумісність ще не підтверджена.');
+ if(editingCarId){garage=garage.map(v=>v.id===editingCarId?{...c,id:editingCarId}:v);}else{c.id='car-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);garage.push(c);activeCarId=c.id;} saveGarage();renderVehicle();closeDialog($('#vehicleDialog'));notify('Авто збережено в гаражі. Сумісність ще не підтверджена.');
 };
-$('#removeCar').onclick=()=>{storage.set('av-car',null);fillVehicle();renderVehicle();notify('Авто видалено');};
+$('#removeCar').onclick=()=>{if(!activeCarId)return;garage=garage.filter(c=>c.id!==activeCarId);activeCarId=garage[0]?.id||null;saveGarage();fillVehicle(activeCarId);renderVehicle();notify('Авто видалено з гаража');};
 function contactsMarkup() {
  const c=window.AV_CONFIG;
  const links=[['Telegram',c.telegram,/^https:\/\/t\.me\//],['Viber',c.viber,/^viber:\/\/chat\?number=/],['WhatsApp',c.whatsapp,/^https:\/\/wa\.me\//]].filter(([,url,re])=>typeof url==='string'&&re.test(url));
@@ -108,7 +118,11 @@ document.addEventListener('click',e=>{
  if(b.matches('[data-add]'))addToCart(Number(b.dataset.add));
  if(b.matches('[data-open-cart]')){renderCart();openDialog('cartDialog');}
  if(b.matches('[data-open-request]'))openCheckout(true);
- if(b.matches('[data-open-car]')){fillVehicle();openDialog('vehicleDialog');}
+ if(b.matches('[data-open-car]')){fillVehicle(activeCarId);openDialog('vehicleDialog');}
+ if(b.matches('[data-add-car]')){fillVehicle(null);openDialog('vehicleDialog');}
+ if(b.matches('[data-select-car]')){activeCarId=b.dataset.selectCar;saveGarage();renderVehicle();notify('Активне авто змінено');}
+ if(b.matches('[data-edit-car]')){fillVehicle(b.dataset.editCar);openDialog('vehicleDialog');}
+ if(b.matches('[data-delete-car]')){const id=b.dataset.deleteCar;garage=garage.filter(c=>c.id!==id);if(activeCarId===id)activeCarId=garage[0]?.id||null;saveGarage();renderVehicle();notify('Авто видалено з гаража');}
  if(b.matches('[data-close]'))closeDialog(b.closest('dialog'));
  if(b.matches('[data-qty]')){const row=cart.find(x=>x.id===Number(b.dataset.qty));if(row)row.qty=Math.min(99,Math.max(1,row.qty+Number(b.dataset.delta)));saveCart();}
  if(b.matches('[data-remove]')){cart=cart.filter(x=>x.id!==Number(b.dataset.remove));saveCart();}
