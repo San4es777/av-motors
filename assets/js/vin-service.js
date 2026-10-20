@@ -1,25 +1,15 @@
-/* NHTSA vPIC integration: vehicle identification only, never parts fitment. */
+/* Multi-source VIN lookup. NHTSA remains primary; WindowSticker is optional enrichment. Neither confirms parts fitment. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.AVVin=api;})(typeof window!=='undefined'?window:globalThis,function(){
  const endpoint='https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/';
- function url(vin,year=''){
-  const normalized=String(vin).trim().toUpperCase();
-  if(!/^[A-HJ-NPR-Z0-9]{17}$/.test(normalized))throw new Error('INVALID_VIN');
-  const u=new URL(endpoint+normalized);u.searchParams.set('format','json');
-  if(/^\d{4}$/.test(String(year))&&Number(year)>=1980&&Number(year)<=new Date().getFullYear()+1)u.searchParams.set('modelyear',year);
-  return u.href;
+ const secondary='https://windowsticker.org/api/v1/vin/';
+ function normalizeVin(vin){const v=String(vin).trim().toUpperCase();if(!/^[A-HJ-NPR-Z0-9]{17}$/.test(v))throw new Error('INVALID_VIN');return v;}
+ function url(vin,year=''){const v=normalizeVin(vin),u=new URL(endpoint+v);u.searchParams.set('format','json');if(/^\\d{4}$/.test(String(year))&&Number(year)>=1980&&Number(year)<=new Date().getFullYear()+1)u.searchParams.set('modelyear',year);return u.href;}
+ function parse(payload){const d=payload?.Results?.[0];if(!d||typeof d!=='object')throw new Error('BAD_RESPONSE');const clean=k=>typeof d[k]==='string'?d[k].trim():'';const codes=clean('ErrorCode').split(',').map(s=>s.trim()).filter(Boolean);return {make:clean('Make'),model:clean('Model'),year:clean('ModelYear'),engine:clean('DisplacementL'),fuel:clean('FuelTypePrimary'),body:clean('BodyClass'),transmission:clean('TransmissionStyle'),drive:clean('DriveType'),trim:clean('Trim'),plant:clean('PlantCountry'),series:clean('Series'),paint:'',paintCode:'',stickerUrl:'',stickerAvailable:false,codes,source:'NHTSA vPIC',extraSource:'WindowSticker.org',extraStatus:'not_checked',complete:codes.length>0&&codes.every(c=>c==='0')&&!!clean('Make')&&!!clean('Model')&&!!clean('ModelYear')};}
+ function mergeExtra(base,p){const v=p?.vehicle||{};const engine=v.engine||{};const paint=p?.windowSticker?.paint||{};const out={...base};const put=(key,value)=>{if((out[key]===undefined||out[key]==='')&&value!==undefined&&value!==null&&String(value).trim()!=='')out[key]=String(value).trim();};put('make',v.make);put('model',v.model);put('year',v.year);put('trim',v.trim);put('body',v.bodyClass);put('engine',engine.displacement?String(engine.displacement).replace(/L$/i,''):undefined);put('fuel',engine.fuel);put('plant',v.plant);put('paint',paint.color);put('paintCode',paint.code);if(p?.windowSticker?.available&&p?.windowSticker?.pdf)out.stickerUrl=p.windowSticker.pdf;out.stickerAvailable=!!p?.windowSticker?.available;out.extraStatus='ok';out.extraAddsData=!!(paint.color||paint.code||v.trim||v.plant||v.transmission||v.drive);out.complete=!!out.make&&!!out.model&&!!out.year;return out;}
+ async function decode(vin,year='',options={}){const fetcher=options.fetcher||fetch,v=normalizeVin(vin);let base;const response=await fetcher(url(v,year),{method:'GET',signal:options.signal,credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'});if(!response.ok)throw new Error(response.status===429?'RATE_LIMIT':'SERVICE_UNAVAILABLE');base=parse(await response.json());
+  // Enrichment is best-effort: failure here must not discard a successful NHTSA decode.
+  try{const extraResponse=await fetcher(secondary+v+'?sticker=false',{method:'GET',signal:options.signal,credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'});if(extraResponse.ok){const extra=await extraResponse.json();if(extra?.ok)base=mergeExtra(base,extra);else base.extraStatus='no_extra_data';}else base.extraStatus='unavailable';}catch(error){if(error?.name==='AbortError')throw error;base.extraStatus='unavailable';}
+  return base;
  }
- function parse(payload){
-  const data=payload?.Results?.[0];if(!data||typeof data!=='object')throw new Error('BAD_RESPONSE');
-  const clean=k=>typeof data[k]==='string'?data[k].trim():'';
-  const codes=clean('ErrorCode').split(',').map(s=>s.trim()).filter(Boolean);
-  return {make:clean('Make'),model:clean('Model'),year:clean('ModelYear'),engine:clean('DisplacementL'),fuel:clean('FuelTypePrimary'),body:clean('BodyClass'),codes,
-   complete:codes.length>0&&codes.every(c=>c==='0')&&!!clean('Make')&&!!clean('Model')&&!!clean('ModelYear')};
- }
- async function decode(vin,year='',options={}){
-  const fetcher=options.fetcher||fetch;
-  const response=await fetcher(url(vin,year),{method:'GET',signal:options.signal,credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'});
-  if(!response.ok)throw new Error(response.status===429?'RATE_LIMIT':'SERVICE_UNAVAILABLE');
-  return parse(await response.json());
- }
- return {url,parse,decode};
+ return {url,parse,decode,mergeExtra};
 });
