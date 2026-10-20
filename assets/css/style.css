@@ -331,3 +331,10 @@ dialog{padding:18px;width:calc(100% - 20px);max-height:calc(100dvh - 24px)}
 .garage-select small{color:var(--accent)}
 .garage-item>.text-button{font-size:12px;padding:5px}
 @media(max-width:480px){.garage-item{grid-template-columns:minmax(0,1fr) auto;gap:6px}.garage-item>.text-button:last-child{grid-column:2}.garage-select{grid-row:1/3}}
+
+/* Vehicle selector and VIN-first form refinements */
+.car-icon{width:24px;height:24px;flex:0 0 auto;fill:currentColor;color:var(--accent)}
+.car-summary .car-icon{width:25px;height:25px}
+.bottom .car-icon{width:22px;height:22px}
+.form-subheading{font-size:15px;margin:22px 0 12px;padding-top:17px;border-top:1px solid var(--line)}
+#vinHint{margin-top:8px;margin-bottom:12px}
